@@ -1,4 +1,6 @@
+import 'package:cubitcounter/cubit/counter_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 void main(List<String> args) {
   runApp(const MyApp());
@@ -9,39 +11,43 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: "Counter App",
-        theme: ThemeData(primaryColor: Colors.blue),
-        home: const MyHomePage());
+    return BlocProvider<CounterCubit>(
+      create: (context) => CounterCubit(),
+      child: MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: "Counter App",
+          theme: ThemeData(primaryColor: Colors.blue),
+          home: const MyHomePage()),
+    );
   }
 }
 
 class MyHomePage extends StatelessWidget {
-  const MyHomePage({super.key});
+  const MyHomePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          title: const Text(
-            "Counter App",
-            style: TextStyle(
-              fontSize: 25,
-            ),
-          ),
           backgroundColor: Colors.blue,
+          title: const Text('Cubit Kullanımı'),
         ),
-        body: const Center(
+        body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Text("You have pushed the button this any times"),
-              Text(
-                "0",
-                style: TextStyle(fontSize: 45, fontWeight: FontWeight.bold),
-              )
+              const Text(
+                'You have pushed the button this many times:',
+              ),
+              BlocBuilder<CounterCubit, CounterState>(
+                builder: (context, CounterState state) {
+                  return Text(
+                    state.sayac.toString(),
+                    style: Theme.of(context).textTheme.headlineMedium,
+                  );
+                },
+              ),
             ],
           ),
         ),
@@ -49,7 +55,9 @@ class MyHomePage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             FloatingActionButton(
-              onPressed: () {},
+              onPressed: () {
+                context.read<CounterCubit>().arttir();
+              },
               tooltip: "Tıkla",
               backgroundColor: Colors.blue,
               shape: RoundedRectangleBorder(
@@ -60,7 +68,9 @@ class MyHomePage extends StatelessWidget {
               height: 10,
             ),
             FloatingActionButton(
-              onPressed: () {},
+              onPressed: () {
+                context.read<CounterCubit>().azalt();
+              },
               tooltip: "Tıkla",
               backgroundColor: Colors.blue,
               shape: RoundedRectangleBorder(
