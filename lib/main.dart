@@ -1,3 +1,4 @@
+import 'package:cubitcounter/bloc/bloc_bloc.dart';
 import 'package:cubitcounter/cubit/counter_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -11,14 +12,20 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<CounterCubit>(
-      create: (context) => CounterCubit(),
-      child: MaterialApp(
-          debugShowCheckedModeBanner: false,
-          title: "Counter App",
-          theme: ThemeData(primaryColor: Colors.blue),
-          home: const MyHomePage()),
-    );
+    return MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (context) => CounterCubit(),
+          ),
+          BlocProvider(
+            create: (context) => BlocBloc(),
+          )
+        ],
+        child: MaterialApp(
+            debugShowCheckedModeBanner: false,
+            title: "Counter App",
+            theme: ThemeData(primaryColor: Colors.blue),
+            home: const MyHomePage()));
   }
 }
 
@@ -40,8 +47,8 @@ class MyHomePage extends StatelessWidget {
               const Text(
                 'You have pushed the button this many times:',
               ),
-              BlocBuilder<CounterCubit, CounterState>(
-                builder: (context, CounterState state) {
+              BlocBuilder<BlocBloc, BlocState>(
+                builder: (context, BlocState state) {
                   return Text(
                     state.sayac.toString(),
                     style: Theme.of(context).textTheme.headlineMedium,
@@ -56,7 +63,7 @@ class MyHomePage extends StatelessWidget {
           children: [
             FloatingActionButton(
               onPressed: () {
-                context.read<CounterCubit>().arttir();
+                context.read<BlocBloc>().add(ArtirCounterEvents());
               },
               tooltip: "Tıkla",
               backgroundColor: Colors.blue,
@@ -69,7 +76,7 @@ class MyHomePage extends StatelessWidget {
             ),
             FloatingActionButton(
               onPressed: () {
-                context.read<CounterCubit>().azalt();
+                context.read<BlocBloc>().add(AzaltCounterEvents());
               },
               tooltip: "Tıkla",
               backgroundColor: Colors.blue,
